@@ -5,15 +5,15 @@ spring:
       path: /h2-console
 
   datasource:
-    url: jdbc:h2:mem:backofficeDb
+    url: jdbc:h2:mem:backofficeDb;NON_KEYWORDS=USER
     driver-class-name: org.h2.Driver
     username: root
     password: '1111'
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
-    generate-ddl: true
+      ddl-auto: none
+    generate-ddl: false
 
     properties:
       format_sql: true
@@ -21,7 +21,7 @@ spring:
         show_sql: true
 
   mvc:
-    hiddenmethod:
+    hidden-method:
       filter:
         enabled: true
 
