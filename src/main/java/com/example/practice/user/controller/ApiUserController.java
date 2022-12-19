@@ -5,6 +5,7 @@ import com.example.practice.notice.model.NoticeResponse;
 import com.example.practice.notice.model.ResponseError;
 import com.example.practice.notice.repository.NoticeRepository;
 import com.example.practice.user.entity.User;
+import com.example.practice.user.exception.ExistsEmailException;
 import com.example.practice.user.exception.UserNotFoundException;
 import com.example.practice.user.model.UserInput;
 import com.example.practice.user.model.UserResponse;
@@ -43,29 +44,29 @@ public class ApiUserController {
 //        return ResponseEntity.ok().build();
 //    }
 
-    @PostMapping("/api/user")
-    public ResponseEntity<?> addUser(@RequestBody @Valid UserInput userInput, Errors errors) {
-
-        List<ResponseError> responseErrorList = new ArrayList<>();
-        if (errors.hasErrors()) {
-            errors.getAllErrors().forEach((e) -> {
-                responseErrorList.add(ResponseError.of((FieldError) e));
-            });
-
-            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
-        }
-
-        User user = User.builder()
-                .email(userInput.getEmail())
-                .userName(userInput.getUserName())
-                .password(userInput.getPassword())
-                .phone(userInput.getPhone())
-                .regDate(LocalDateTime.now())
-                .build();
-        userRepository.save(user);
-
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping("/api/user")
+//    public ResponseEntity<?> addUser(@RequestBody @Valid UserInput userInput, Errors errors) {
+//
+//        List<ResponseError> responseErrorList = new ArrayList<>();
+//        if (errors.hasErrors()) {
+//            errors.getAllErrors().forEach((e) -> {
+//                responseErrorList.add(ResponseError.of((FieldError) e));
+//            });
+//
+//            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
+//        }
+//
+//        User user = User.builder()
+//                .email(userInput.getEmail())
+//                .userName(userInput.getUserName())
+//                .password(userInput.getPassword())
+//                .phone(userInput.getPhone())
+//                .regDate(LocalDateTime.now())
+//                .build();
+//        userRepository.save(user);
+//
+//        return ResponseEntity.ok().build();
+//    }
 
     @PutMapping("api/user/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody @Valid User userUpdate, Errors errors) {
@@ -115,10 +116,42 @@ public class ApiUserController {
 
         List<NoticeResponse> noticeResponseList = new ArrayList<>();
 
-        noticeList.stream().forEach((e)->{
+        noticeList.stream().forEach((e) -> {
             noticeResponseList.add(NoticeResponse.of(e));
         });
 
         return noticeResponseList;
+    }
+
+    @PostMapping("/api/user")
+    public ResponseEntity<?> addUser(@RequestBody @Valid UserInput userInput, Errors errors) {
+
+        List<ResponseError> responseErrorList = new ArrayList<>();
+        if (errors.hasErrors()) {
+            errors.getAllErrors().stream().forEach((e) -> {
+                responseErrorList.add(ResponseError.of((FieldError) e));
+            });
+            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
+        }
+
+        if(userRepository.countByEmail(userInput.getEmail())>0){
+            throw new ExistsEmailException("이미 존재하는 이메일 입니다.");
+        }
+
+        User user = User.builder()
+                .email(userInput.getEmail())
+                .userName(userInput.getUserName())
+                .phone(userInput.getPhone())
+                .password(userInput.getPassword())
+                .regDate(LocalDateTime.now())
+                .build();
+        userRepository.save(user);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @ExceptionHandler(ExistsEmailException.class)
+    public ResponseEntity<?> ExistsEmailExceptionHandler(ExistsEmailException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
