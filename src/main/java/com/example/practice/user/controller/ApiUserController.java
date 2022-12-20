@@ -6,8 +6,10 @@ import com.example.practice.notice.model.ResponseError;
 import com.example.practice.notice.repository.NoticeRepository;
 import com.example.practice.user.entity.User;
 import com.example.practice.user.exception.ExistsEmailException;
+import com.example.practice.user.exception.PasswordNotMathException;
 import com.example.practice.user.exception.UserNotFoundException;
 import com.example.practice.user.model.UserInput;
+import com.example.practice.user.model.UserInputPassword;
 import com.example.practice.user.model.UserResponse;
 import com.example.practice.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -134,7 +136,7 @@ public class ApiUserController {
             return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
         }
 
-        if(userRepository.countByEmail(userInput.getEmail())>0){
+        if (userRepository.countByEmail(userInput.getEmail()) > 0) {
             throw new ExistsEmailException("이미 존재하는 이메일 입니다.");
         }
 
@@ -150,8 +152,29 @@ public class ApiUserController {
         return ResponseEntity.ok().build();
     }
 
-    @ExceptionHandler(ExistsEmailException.class)
-    public ResponseEntity<?> ExistsEmailExceptionHandler(ExistsEmailException exception) {
+    @ExceptionHandler(value = {ExistsEmailException.class, PasswordNotMathException.class})
+    public ResponseEntity<?> ExistsEmailExceptionHandler(RuntimeException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @PatchMapping("/api/user/{id}/password")
+    public ResponseEntity<?> updateUserPassword(@PathVariable Long id, @RequestBody UserInputPassword userInputPassword, Errors errors) {
+
+        List<ResponseError> responseErrorList = new ArrayList<>();
+        if (errors.hasErrors()) {
+            errors.getAllErrors().stream().forEach((e) -> {
+                responseErrorList.add(ResponseError.of((FieldError) e));
+            });
+            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
+        }
+
+        User user = userRepository.findByIdAndPassword(id, userInputPassword.getPassword())
+                .orElseThrow(() -> new PasswordNotMathException("비밀번호가 일치하지 않습니다."));
+
+        user.setPassword(userInputPassword.getPassword());
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok().build();
     }
 }
