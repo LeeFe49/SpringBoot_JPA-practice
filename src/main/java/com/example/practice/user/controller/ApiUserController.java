@@ -1,8 +1,10 @@
 package com.example.practice.user.controller;
 
 import com.example.practice.notice.entity.Notice;
+import com.example.practice.notice.entity.NoticeLike;
 import com.example.practice.notice.model.NoticeResponse;
 import com.example.practice.notice.model.ResponseError;
+import com.example.practice.notice.repository.NoticeLikeRepository;
 import com.example.practice.notice.repository.NoticeRepository;
 import com.example.practice.user.entity.User;
 import com.example.practice.user.exception.ExistsEmailException;
@@ -34,6 +36,8 @@ public class ApiUserController {
 
     private final UserRepository userRepository;
     private final NoticeRepository noticeRepository;
+
+    private final NoticeLikeRepository noticeLikeRepository;
 
 //    @PostMapping("/api/user")
 //    public ResponseEntity<?> addUser(@RequestBody @Valid UserInput userInput, Errors errors) {
@@ -273,6 +277,16 @@ public class ApiUserController {
     void sendSMS(String message) {
         System.out.println("[문자메시지전송]");
         System.out.println(message);
+    }
+
+    @GetMapping("/api/user/{id}/notice/like")
+    public List<NoticeLike> likeNotice(@PathVariable Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+
+        List<NoticeLike> noticeLikeList = noticeLikeRepository.findByUser(user);
+
+        return noticeLikeList;
     }
 
 }
