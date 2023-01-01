@@ -32,6 +32,7 @@ public class ApiNoticeController {
     private final NoticeRepository noticeRepository;
 
     @GetMapping("/api/notice2")
+    //임의로 설정한 notice(공지사항) 객체 반환
     public NoticeModel notice() {
 
         LocalDateTime regDate = LocalDateTime.of(2021, 2, 8, 0, 0);
@@ -46,6 +47,7 @@ public class ApiNoticeController {
     }
 
     @GetMapping("/api/notice")
+    //임의로 설정한 notice 두개 리스트로 묶어서 반환
     public List<NoticeModel> notice2() {
 
         List<NoticeModel> noticeModelList = new ArrayList<>();
@@ -69,48 +71,8 @@ public class ApiNoticeController {
         return noticeModelList;
     }
 
-    @GetMapping("/api/notice/count")
-    public int noticeCount() {
-        return 1;
-    }
-
-    //    @PostMapping("/api/notice")
-//    public NoticeModel addNotice(@RequestParam String title, @RequestParam String contents) {
-//
-//        NoticeModel notice = NoticeModel.builder()
-//                .Id(2)
-//                .title(title)
-//                .contents(contents)
-//                .regDate(LocalDateTime.now())
-//                .build();
-//
-//        return notice;
-//    }
-//    @PostMapping("api/notice")
-//    public NoticeModel addNotice(@RequestBody NoticeModel noticeModel) {
-//        noticeModel.setId(3);
-//        noticeModel.setRegDate(LocalDateTime.now());
-//
-//        return noticeModel;
-//    }
-
-//    @PostMapping("/api/notice")
-//    public Notice addNotice(@RequestBody NoticeInput noticeInput) {
-//
-//        Notice notice = Notice.builder()
-//                .title(notice().getTitle())
-//                .contents(noticeInput.getContents())
-//                .regDate(LocalDateTime.now())
-//                .hits(0)
-//                .likes(0)
-//                .build();
-//
-//        Notice resultNotice = noticeRepository.save(notice);
-//
-//        return resultNotice;
-//    }
-
     @GetMapping("/api/notice/{id}")
+    //notice id로 탐색 후 없으면 예외처리
     public Notice getNotice(@PathVariable Long id) {
 
         Notice notice = noticeRepository.findById(id)
@@ -144,13 +106,6 @@ public class ApiNoticeController {
         notice.setHits(notice.getHits() + 1);
         noticeRepository.save(notice);
     }
-
-//    @DeleteMapping("api/notice/{id}")
-//    public void deleteNotice(@PathVariable Long id) {
-//        Notice notice = noticeRepository.findById(id)
-//                .orElseThrow(() -> new NoticeNotFoundException("공지사항의 글이 존재하지 않습니다."));
-//        noticeRepository.delete(notice);
-//    }
 
     @ExceptionHandler(AlreadyDeletedException.class)
     public ResponseEntity<String> handlerAlreadyDeletedException(AlreadyDeletedException exception) {
