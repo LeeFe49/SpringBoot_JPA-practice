@@ -1,16 +1,15 @@
 package com.example.practice.user.controller;
 
 import com.example.practice.user.entity.User;
+import com.example.practice.user.exception.UserNotFoundException;
 import com.example.practice.user.model.ResponseMessage;
 import com.example.practice.user.model.UserSearch;
+import com.example.practice.user.model.UserStatusInput;
 import com.example.practice.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,5 +53,21 @@ public class ApiAdminUserController {
                 , userSearch.getUserName());
 
         return ResponseEntity.ok().body(ResponseMessage.success(userList));
+    }
+
+    @PatchMapping("/api/admin/user/{id}/status")
+    public ResponseEntity<?> userStatus(@PathVariable Long id, @RequestBody UserStatusInput userStatusInput) {
+
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (!optionalUser.isPresent()) {
+            return new ResponseEntity<>(ResponseMessage.fail("사용자 정보가 존재하지 않습니다."), HttpStatus.BAD_REQUEST);
+        }
+
+        User user = optionalUser.get();
+
+        user.setStatus(userStatusInput.getStatus());
+        userRepository.save(user);
+
+        return ResponseEntity.ok().build();
     }
 }
