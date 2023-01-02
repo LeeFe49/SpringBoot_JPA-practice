@@ -1,5 +1,7 @@
 package com.example.practice.user.controller;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.example.practice.notice.entity.Notice;
 import com.example.practice.notice.entity.NoticeLike;
 import com.example.practice.notice.model.NoticeResponse;
@@ -14,6 +16,7 @@ import com.example.practice.user.model.*;
 import com.example.practice.user.repository.UserRepository;
 import com.example.practice.util.PasswordUtils;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.asm.Advice;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -288,7 +292,7 @@ public class ApiUserController {
     }
 
     @PostMapping("/api/user/login")
-    public ResponseEntity<?> createToken(@RequestBody @Valid UserLogin userLogin,Errors errors) {
+    public ResponseEntity<?> createToken(@RequestBody @Valid UserLogin userLogin, Errors errors) {
 
         List<ResponseError> responseErrorList = new ArrayList<>();
         if (errors.hasErrors()) {
@@ -305,6 +309,16 @@ public class ApiUserController {
             throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다.");
         }
 
-        return ResponseEntity.ok().build();
+        LocalDateTime expiredDateTime = LocalDateTime.now().plusMonths(1);
+        Date expiredDate = java.sql.Timestamp.valueOf(expiredDateTime);
+
+        String token = JWT.create()
+                .withExpiresAt(expiredDate)
+                .withClaim("user_id", user.getId())
+                .withSubject(user.getUserName())
+                .withIssuer(user.getEmail())
+                .sign(Algorithm.HMAC512("fastcampus".getBytes()));
+
+        return ResponseEntity.ok().body(UserLoginToken.builder().token(token).build());
     }
 }
