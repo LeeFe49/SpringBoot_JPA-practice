@@ -8,13 +8,11 @@ import com.example.practice.notice.repository.NoticeLikeRepository;
 import com.example.practice.notice.repository.NoticeRepository;
 import com.example.practice.user.entity.User;
 import com.example.practice.user.exception.ExistsEmailException;
-import com.example.practice.user.exception.PasswordNotMathException;
+import com.example.practice.user.exception.PasswordNotMatchException;
 import com.example.practice.user.exception.UserNotFoundException;
-import com.example.practice.user.model.UserInput;
-import com.example.practice.user.model.UserInputFind;
-import com.example.practice.user.model.UserInputPassword;
-import com.example.practice.user.model.UserResponse;
+import com.example.practice.user.model.*;
 import com.example.practice.user.repository.UserRepository;
+import com.example.practice.util.PasswordUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -160,7 +158,7 @@ public class ApiUserController {
 //        return ResponseEntity.ok().build();
 //    }
 
-    @ExceptionHandler(value = {ExistsEmailException.class, PasswordNotMathException.class})
+    @ExceptionHandler(value = {ExistsEmailException.class, PasswordNotMatchException.class})
     public ResponseEntity<?> ExistsEmailExceptionHandler(RuntimeException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
@@ -177,7 +175,7 @@ public class ApiUserController {
         }
 
         User user = userRepository.findByIdAndPassword(id, userInputPassword.getPassword())
-                .orElseThrow(() -> new PasswordNotMathException("비밀번호가 일치하지 않습니다."));
+                .orElseThrow(() -> new PasswordNotMatchException("비밀번호가 일치하지 않습니다."));
 
         user.setPassword(userInputPassword.getPassword());
 
@@ -289,4 +287,24 @@ public class ApiUserController {
         return noticeLikeList;
     }
 
+    @PostMapping("/api/user/login")
+    public ResponseEntity<?> createToken(@RequestBody @Valid UserLogin userLogin,Errors errors) {
+
+        List<ResponseError> responseErrorList = new ArrayList<>();
+        if (errors.hasErrors()) {
+            errors.getAllErrors().stream().forEach((e) -> {
+                responseErrorList.add(ResponseError.of((FieldError) e));
+            });
+            return new ResponseEntity<>(responseErrorList, HttpStatus.BAD_REQUEST);
+        }
+
+        User user = userRepository.findByEmail(userLogin.getEmail())
+                .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+
+        if (!PasswordUtils.equalPassword(userLogin.getPassword(), user.getPassword())) {
+            throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다.");
+        }
+
+        return ResponseEntity.ok().build();
+    }
 }
