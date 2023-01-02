@@ -2,10 +2,12 @@ package com.example.practice.user.controller;
 
 import com.example.practice.notice.repository.NoticeRepository;
 import com.example.practice.user.entity.User;
+import com.example.practice.user.entity.UserLoginHistory;
 import com.example.practice.user.exception.UserNotFoundException;
 import com.example.practice.user.model.ResponseMessage;
 import com.example.practice.user.model.UserSearch;
 import com.example.practice.user.model.UserStatusInput;
+import com.example.practice.user.repository.UserLoginHistoryRepository;
 import com.example.practice.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,8 @@ public class ApiAdminUserController {
 
     private final UserRepository userRepository;
     private final NoticeRepository noticeRepository;
+
+    private final UserLoginHistoryRepository userLoginHistoryRepository;
 
 //    @GetMapping("/api/admin/user")
 //    public ResponseMessage userList() {
@@ -90,5 +94,33 @@ public class ApiAdminUserController {
         userRepository.delete(user);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/api/admin/user/login/history")
+    public ResponseEntity<?> userLoginHistory() {
+
+        List<UserLoginHistory> userLoginHistories = userLoginHistoryRepository.findAll();
+
+        return ResponseEntity.ok().body(userLoginHistories);
+    }
+
+    @PatchMapping("/api/admin/user/{id}/lock")
+    public ResponseEntity<?> userLock(@PathVariable Long id) {
+
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (!optionalUser.isPresent()) {
+            return new ResponseEntity<>(ResponseMessage.fail("사용자 정보가 존재하지 않습니다."), HttpStatus.BAD_REQUEST);
+        }
+
+        User user = optionalUser.get();
+
+        if (user.isLockYn()) {
+            return new ResponseEntity<>(ResponseMessage.fail("이미 접속제한이 된 사용자 입니다."), HttpStatus.BAD_REQUEST);
+        }
+
+        user.setLockYn(true);
+        userRepository.save(user);
+
+        return ResponseEntity.ok().body(ResponseMessage.success());
     }
 }

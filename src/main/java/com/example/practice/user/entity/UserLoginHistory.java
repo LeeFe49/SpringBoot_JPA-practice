@@ -1,6 +1,5 @@
 package com.example.practice.user.entity;
 
-import com.example.practice.user.model.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,16 +8,19 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
 @Builder
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class User {
+@Entity
+public class UserLoginHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @Column
+    private long userId;
 
     @Column
     private String email;
@@ -27,20 +29,8 @@ public class User {
     private String userName;
 
     @Column
-    private String password;
+    private LocalDateTime loginDate;
 
     @Column
-    private String phone;
-
-    @Column
-    private LocalDateTime regDate;
-
-    @Column
-    private LocalDateTime updateDate;
-
-    @Column
-    private UserStatus status;
-
-    @Column
-    private boolean lockYn;
+    private String ipAddr;
 }

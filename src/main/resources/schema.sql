@@ -10,7 +10,8 @@ create table USER
     PHONE       VARCHAR(255),
     REG_DATE    TIMESTAMP,
     UPDATE_DATE TIMESTAMP,
-    STATUS      INTEGER
+    STATUS      INTEGER,
+    LOCK_YN     BOOLEAN
 );
 
 CREATE TABLE NOTICE
@@ -29,4 +30,14 @@ CREATE TABLE NOTICE
 
     USER_ID      BIGINT,
     constraint FK_NOTICE_USER_ID foreign key (USER_ID) references USER (ID)
+);
+
+CREATE TABLE USER_LOGIN_HISTORY
+(
+    ID         BIGINT auto_increment primary key,
+    USER_ID    BIGINT,
+    EMAIL      varchar(255),
+    USER_NAME  varchar(255),
+    LOGIN_DATE TIMESTAMP,
+    IP_ADDR    varchar(255)
 );
