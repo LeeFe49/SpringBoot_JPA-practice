@@ -7,9 +7,12 @@ import com.example.practice.user.exception.UserNotFoundException;
 import com.example.practice.user.model.ResponseMessage;
 import com.example.practice.user.model.UserSearch;
 import com.example.practice.user.model.UserStatusInput;
+import com.example.practice.user.model.UserSummary;
 import com.example.practice.user.repository.UserLoginHistoryRepository;
 import com.example.practice.user.repository.UserRepository;
+import com.example.practice.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +26,9 @@ public class ApiAdminUserController {
 
     private final UserRepository userRepository;
     private final NoticeRepository noticeRepository;
-
     private final UserLoginHistoryRepository userLoginHistoryRepository;
+
+    private final UserService userService;
 
 //    @GetMapping("/api/admin/user")
 //    public ResponseMessage userList() {
@@ -142,5 +146,22 @@ public class ApiAdminUserController {
         userRepository.save(user);
 
         return ResponseEntity.ok().body(ResponseMessage.success());
+    }
+
+    @GetMapping("/api/admin/user/status/count")
+    public ResponseEntity<?> userStatusCount() {
+
+        UserSummary userSummary = userService.getUserStatusCount();
+
+        return ResponseEntity.ok().body(ResponseMessage.success(userSummary));
+    }
+
+
+    @GetMapping("/api/admin/user/today")
+    public ResponseEntity<?> todayUser() {
+
+        List<User> users = userService.getTodayUsers();
+
+        return ResponseEntity.ok().body(ResponseMessage.success(users));
     }
 }

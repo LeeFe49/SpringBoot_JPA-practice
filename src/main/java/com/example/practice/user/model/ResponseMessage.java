@@ -1,15 +1,10 @@
 package com.example.practice.user.model;
 
-import com.example.practice.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
-import java.util.List;
-import java.util.Optional;
 
 @Data
 @Builder
@@ -18,7 +13,7 @@ import java.util.Optional;
 public class ResponseMessage {
 
     private ResponseMessageHeader header;
-    private Object data;
+    private Object body;
 
     public static ResponseMessage fail(String message) {
         return ResponseMessage.builder()
@@ -28,7 +23,7 @@ public class ResponseMessage {
                         .message(message)
                         .status(HttpStatus.BAD_REQUEST.value())
                         .build())
-                .data(null)
+                .body(null)
                 .build();
     }
 
@@ -40,7 +35,7 @@ public class ResponseMessage {
                         .message("")
                         .status(HttpStatus.OK.value())
                         .build())
-                .data(data)
+                .body(data)
                 .build();
     }
 
@@ -52,7 +47,7 @@ public class ResponseMessage {
                         .message("")
                         .status(HttpStatus.OK.value())
                         .build())
-                .data(null)
+                .body(null)
                 .build();
     }
 }
