@@ -2,8 +2,10 @@ package com.example.practice.user.service;
 
 
 import com.example.practice.user.entity.User;
+import com.example.practice.user.model.UserNoticeCount;
 import com.example.practice.user.model.UserStatus;
 import com.example.practice.user.model.UserSummary;
+import com.example.practice.user.repository.UserCustomRepository;
 import com.example.practice.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserCustomRepository userCustomRepository;
     @Override
     public UserSummary getUserStatusCount() {
 
@@ -38,5 +41,12 @@ public class UserServiceImpl implements UserService {
         LocalDateTime endDate = startDate.plusDays(1);
 
         return userRepository.findToday(startDate, endDate);
+    }
+
+    @Override
+    public List<UserNoticeCount> getUserNoticeCount() {
+
+
+        return userCustomRepository.findUserNoticeCount();
     }
 }

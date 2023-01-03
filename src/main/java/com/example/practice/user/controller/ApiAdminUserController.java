@@ -4,10 +4,7 @@ import com.example.practice.notice.repository.NoticeRepository;
 import com.example.practice.user.entity.User;
 import com.example.practice.user.entity.UserLoginHistory;
 import com.example.practice.user.exception.UserNotFoundException;
-import com.example.practice.user.model.ResponseMessage;
-import com.example.practice.user.model.UserSearch;
-import com.example.practice.user.model.UserStatusInput;
-import com.example.practice.user.model.UserSummary;
+import com.example.practice.user.model.*;
 import com.example.practice.user.repository.UserLoginHistoryRepository;
 import com.example.practice.user.repository.UserRepository;
 import com.example.practice.user.service.UserService;
@@ -164,4 +161,13 @@ public class ApiAdminUserController {
 
         return ResponseEntity.ok().body(ResponseMessage.success(users));
     }
+
+    @GetMapping("/api/admin/user/notice/count")
+    public ResponseEntity<?> userNoticeCount() {
+
+        List<UserNoticeCount> userNoticeCountList = userService.getUserNoticeCount();
+
+        return ResponseEntity.ok().body(ResponseMessage.success(userNoticeCountList));
+    }
+
 }
