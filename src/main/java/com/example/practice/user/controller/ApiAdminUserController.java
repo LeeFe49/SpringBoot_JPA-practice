@@ -3,13 +3,11 @@ package com.example.practice.user.controller;
 import com.example.practice.notice.repository.NoticeRepository;
 import com.example.practice.user.entity.User;
 import com.example.practice.user.entity.UserLoginHistory;
-import com.example.practice.user.exception.UserNotFoundException;
 import com.example.practice.user.model.*;
 import com.example.practice.user.repository.UserLoginHistoryRepository;
 import com.example.practice.user.repository.UserRepository;
 import com.example.practice.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,18 +24,6 @@ public class ApiAdminUserController {
     private final UserLoginHistoryRepository userLoginHistoryRepository;
 
     private final UserService userService;
-
-//    @GetMapping("/api/admin/user")
-//    public ResponseMessage userList() {
-//
-//        List<User> userList = userRepository.findAll();
-//        long totalUserCount = userRepository.count();
-//
-//        return ResponseMessage.builder()
-//                .totalCount(totalUserCount)
-//                .data(userList)
-//                .build();
-//    }
 
     @GetMapping("/api/admin/user/{id}")
     public ResponseEntity<?> userDetail(@PathVariable Long id) {
