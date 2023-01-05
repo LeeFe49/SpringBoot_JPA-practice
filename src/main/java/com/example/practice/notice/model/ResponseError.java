@@ -1,5 +1,7 @@
 package com.example.practice.notice.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,8 +20,18 @@ public class ResponseError {
 
     public static ResponseError of(FieldError e) {
         return ResponseError.builder()
-                .field((e).getField())
-                .message(e.getDefaultMessage())
-                .build();
+            .field((e).getField())
+            .message(e.getDefaultMessage())
+            .build();
+    }
+
+    public static List<ResponseError> of(List<ObjectError> errors) {
+        List<ResponseError> responseErrors = new ArrayList<>();
+        if (errors != null) {
+            errors.stream().forEach((e) -> {
+                responseErrors.add(ResponseError.of((FieldError) e));
+            });
+        }
+        return responseErrors;
     }
 }
