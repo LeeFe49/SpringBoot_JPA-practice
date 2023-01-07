@@ -6,6 +6,7 @@ spring:
 
   datasource:
     url: jdbc:h2:mem:backofficeDb;NON_KEYWORDS=USER
+    #url: jdbc:h2:file:/C/dev/workspace/practice/backofficeDb;NON_KEYWORDS=USER
     driver-class-name: org.h2.Driver
     username: root
     password:
