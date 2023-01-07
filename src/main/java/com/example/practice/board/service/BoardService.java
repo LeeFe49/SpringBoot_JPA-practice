@@ -7,4 +7,6 @@ import com.example.practice.board.model.ServiceResult;
 public interface BoardService {
 
     ServiceResult addBoard(BoardTypeInput boardTypeInput);
+
+    ServiceResult updateBoard(long id, BoardTypeInput boardTypeInput);
 }
