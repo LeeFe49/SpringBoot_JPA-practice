@@ -3,10 +3,12 @@ package com.example.practice.board.service;
 import com.example.practice.board.entity.Board;
 import com.example.practice.board.entity.BoardType;
 import com.example.practice.board.model.BoardTypeInput;
+import com.example.practice.board.model.BoardTypeUsing;
 import com.example.practice.board.model.ServiceResult;
 import com.example.practice.board.repository.BoardRepository;
 import com.example.practice.board.repository.BoardTypeRepository;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -72,6 +74,28 @@ public class BoardServiceImpl implements BoardService {
         }
 
         boardTypeRepository.delete(boardType);
+
+        return ServiceResult.success();
+    }
+
+    @Override
+    public List<BoardType> getAllBoardType() {
+
+        return boardTypeRepository.findAll();
+    }
+
+    @Override
+    public ServiceResult setBoardTypeUsing(Long id, BoardTypeUsing boardTypeUsing) {
+
+        Optional<BoardType> optionalBoardType = boardTypeRepository.findById(id);
+        if (!optionalBoardType.isPresent()) {
+            return ServiceResult.fail("삭제할 게시판타입이 없습니다.");
+        }
+
+        BoardType boardType = optionalBoardType.get();
+
+        boardType.setUsingYn(boardTypeUsing.isUsingYn());
+        boardTypeRepository.save(boardType);
 
         return ServiceResult.success();
     }

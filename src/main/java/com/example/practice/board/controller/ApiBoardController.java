@@ -1,6 +1,8 @@
 package com.example.practice.board.controller;
 
+import com.example.practice.board.entity.BoardType;
 import com.example.practice.board.model.BoardTypeInput;
+import com.example.practice.board.model.BoardTypeUsing;
 import com.example.practice.board.model.ServiceResult;
 import com.example.practice.board.service.BoardService;
 import com.example.practice.notice.model.ResponseError;
@@ -12,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -60,7 +64,7 @@ public class ApiBoardController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/api/board/{id}")
+    @DeleteMapping("/api/board/type/{id}")
     public ResponseEntity<?> deleteBoardType(@PathVariable Long id) {
 
         ServiceResult result = boardService.deleteBoard(id);
@@ -68,6 +72,25 @@ public class ApiBoardController {
         if (!result.isResult()) {
             return ResponseEntity.ok().body(ResponseMessage.fail(result.getMessage()));
         }
+        return ResponseEntity.ok().body(ResponseMessage.success());
+    }
+
+    @GetMapping("/api/board/type")
+    public ResponseEntity<?> boardType() {
+
+        List<BoardType> boardTypeList = boardService.getAllBoardType();
+
+        return ResponseEntity.ok().body(ResponseMessage.success(boardTypeList));
+    }
+
+    @PatchMapping("/api/board/type/{id}/using")
+    public ResponseEntity<?> usingBoardType(@PathVariable Long id, @RequestBody BoardTypeUsing boardTypeUsing) {
+
+        ServiceResult result = boardService.setBoardTypeUsing(id, boardTypeUsing);
+        if (!result.isResult()) {
+            return ResponseEntity.ok().body(ResponseMessage.fail(result.getMessage()));
+        }
+
         return ResponseEntity.ok().body(ResponseMessage.success());
     }
 }

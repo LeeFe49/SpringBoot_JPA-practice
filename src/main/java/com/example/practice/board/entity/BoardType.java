@@ -30,4 +30,7 @@ public class BoardType {
 
     @Column
     private LocalDateTime updateDate;
+
+    @Column
+    private boolean usingYn;
 }
