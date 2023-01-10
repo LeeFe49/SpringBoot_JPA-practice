@@ -108,4 +108,23 @@ public class BoardServiceImpl implements BoardService {
 
         return boardTypeCustomRepository.getBoardTypeCount();
     }
+
+    @Override
+    public ServiceResult setBoardTop(Long id) {
+
+        Optional<Board> optionalBoard = boardRepository.findById(id);
+        if (!optionalBoard.isPresent()) {
+            return ServiceResult.fail("게시글이 존재하지 않습니다.");
+        }
+
+        Board board = optionalBoard.get();
+        if (board.isTopYn()) {
+            return ServiceResult.fail("이미 게시글이 최상단에 배치되어 있습니다.");
+        }
+
+        board.setTopYn(true);
+        boardRepository.save(board);
+
+        return ServiceResult.success();
+    }
 }

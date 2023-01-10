@@ -85,7 +85,8 @@ public class ApiBoardController {
     }
 
     @PatchMapping("/api/board/type/{id}/using")
-    public ResponseEntity<?> usingBoardType(@PathVariable Long id, @RequestBody BoardTypeUsing boardTypeUsing) {
+    public ResponseEntity<?> usingBoardType(@PathVariable Long id,
+        @RequestBody BoardTypeUsing boardTypeUsing) {
 
         ServiceResult result = boardService.setBoardTypeUsing(id, boardTypeUsing);
         if (!result.isResult()) {
@@ -100,5 +101,12 @@ public class ApiBoardController {
 
         List<BoardTypeCount> list = boardService.getBoardTypeCount();
         return ResponseEntity.ok().body(list);
+    }
+
+    @PatchMapping("/api/board/{id}/top")
+    public ResponseEntity<?> boardPostTop(@PathVariable Long id) {
+
+        ServiceResult result = boardService.setBoardTop(id);
+        return ResponseEntity.ok().body(result);
     }
 }
