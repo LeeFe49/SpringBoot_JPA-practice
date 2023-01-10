@@ -5,7 +5,9 @@ import com.example.practice.user.model.UserNoticeCount;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import lombok.RequiredArgsConstructor;
+import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
@@ -22,9 +24,14 @@ public class BoardTypeCustomRepository {
 
 //        List<BoardTypeCount> list = entityManager.createNativeQuery(sql).getResultList();
 
-        List<Object[]> result = entityManager.createNativeQuery(sql).getResultList();
-        List<BoardTypeCount> resultList = result.stream().map(e-> new BoardTypeCount(e))
-            .collect(Collectors.toList());
+//        List<Object[]> result = entityManager.createNativeQuery(sql).getResultList();
+//        List<BoardTypeCount> resultList = result.stream().map(e-> new BoardTypeCount(e))
+//            .collect(Collectors.toList());
+
+        Query nativeQuery = entityManager.createNativeQuery(sql);
+        JpaResultMapper jpaResultMapper = new JpaResultMapper();
+
+        List<BoardTypeCount> resultList = jpaResultMapper.list(nativeQuery, BoardTypeCount.class);
 
         return resultList;
     }

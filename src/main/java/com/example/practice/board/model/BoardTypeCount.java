@@ -28,4 +28,13 @@ public class BoardTypeCount {
         this.usingYn = (Boolean) arrObj[3];
         this.boardCount = ((BigInteger) arrObj[4]).longValue();
     }
+
+    public BoardTypeCount(BigInteger id, String boardName, Timestamp regDate, Boolean usingYn,
+        BigInteger boardCount) {
+        this.id = id.longValue();
+        this.boardName = boardName;
+        this.regDate = regDate.toLocalDateTime();
+        this.usingYn = usingYn;
+        this.boardCount = boardCount.longValue();
+    }
 }
