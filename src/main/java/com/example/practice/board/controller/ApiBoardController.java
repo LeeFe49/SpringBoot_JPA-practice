@@ -106,7 +106,14 @@ public class ApiBoardController {
     @PatchMapping("/api/board/{id}/top")
     public ResponseEntity<?> boardPostTop(@PathVariable Long id) {
 
-        ServiceResult result = boardService.setBoardTop(id);
+        ServiceResult result = boardService.setBoardTop(id, true);
+        return ResponseEntity.ok().body(result);
+    }
+
+    @PatchMapping("/api/board/{id}/top/Clear")
+    public ResponseEntity<?> boardPostTopClear(@PathVariable Long id) {
+
+        ServiceResult result = boardService.setBoardTop(id, false);
         return ResponseEntity.ok().body(result);
     }
 }
