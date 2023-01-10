@@ -1,6 +1,7 @@
 package com.example.practice.board.service;
 
 import com.example.practice.board.entity.BoardType;
+import com.example.practice.board.model.BoardTypeCount;
 import com.example.practice.board.model.BoardTypeInput;
 import com.example.practice.board.model.BoardTypeUsing;
 import com.example.practice.board.model.ServiceResult;
@@ -17,4 +18,6 @@ public interface BoardService {
     List<BoardType> getAllBoardType();
 
     ServiceResult setBoardTypeUsing(Long id, BoardTypeUsing boardTypeUsing);
+
+    List<BoardTypeCount> getBoardTypeCount();
 }

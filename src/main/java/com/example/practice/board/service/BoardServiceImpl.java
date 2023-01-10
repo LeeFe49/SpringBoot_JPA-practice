@@ -2,10 +2,12 @@ package com.example.practice.board.service;
 
 import com.example.practice.board.entity.Board;
 import com.example.practice.board.entity.BoardType;
+import com.example.practice.board.model.BoardTypeCount;
 import com.example.practice.board.model.BoardTypeInput;
 import com.example.practice.board.model.BoardTypeUsing;
 import com.example.practice.board.model.ServiceResult;
 import com.example.practice.board.repository.BoardRepository;
+import com.example.practice.board.repository.BoardTypeCustomRepository;
 import com.example.practice.board.repository.BoardTypeRepository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,6 +21,7 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardTypeRepository boardTypeRepository;
     private final BoardRepository boardRepository;
+    private final BoardTypeCustomRepository boardTypeCustomRepository;
 
     public ServiceResult addBoard(BoardTypeInput boardTypeInput) {
 
@@ -98,5 +101,11 @@ public class BoardServiceImpl implements BoardService {
         boardTypeRepository.save(boardType);
 
         return ServiceResult.success();
+    }
+
+    @Override
+    public List<BoardTypeCount> getBoardTypeCount() {
+
+        return boardTypeCustomRepository.getBoardTypeCount();
     }
 }

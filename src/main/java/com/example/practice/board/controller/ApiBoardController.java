@@ -1,6 +1,7 @@
 package com.example.practice.board.controller;
 
 import com.example.practice.board.entity.BoardType;
+import com.example.practice.board.model.BoardTypeCount;
 import com.example.practice.board.model.BoardTypeInput;
 import com.example.practice.board.model.BoardTypeUsing;
 import com.example.practice.board.model.ServiceResult;
@@ -92,5 +93,12 @@ public class ApiBoardController {
         }
 
         return ResponseEntity.ok().body(ResponseMessage.success());
+    }
+
+    @GetMapping("/api/board/type/count")
+    public ResponseEntity<?> boardTypeCount() {
+
+        List<BoardTypeCount> list = boardService.getBoardTypeCount();
+        return ResponseEntity.ok().body(list);
     }
 }
