@@ -1,5 +1,6 @@
 package com.example.practice.board.controller;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.example.practice.board.common.model.ResponseResult;
 import com.example.practice.board.entity.BoardType;
 import com.example.practice.board.model.BoardPeriod;
@@ -10,6 +11,7 @@ import com.example.practice.board.model.ServiceResult;
 import com.example.practice.board.service.BoardService;
 import com.example.practice.notice.model.ResponseError;
 import com.example.practice.user.model.ResponseMessage;
+import com.example.practice.util.JWTUtils;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -128,6 +131,23 @@ public class ApiBoardController {
             return ResponseResult.fail(result.getMessage());
         }
 
+        return ResponseResult.success();
+    }
+
+    @PutMapping("/api/board/{id}/hits")
+    public ResponseEntity<?> boardHits(@PathVariable Long id, @RequestHeader("F-TOKEN") String token) {
+
+        String email = "";
+        try {
+            email = JWTUtils.getIssuer(token);
+        } catch (JWTVerificationException e) {
+            return ResponseResult.fail("토큰 정보가 정확하지 않습니다.");
+        }
+
+        ServiceResult result = boardService.setBoardHits(id, email);
+        if (result.isFail()) {
+            return ResponseResult.fail(result.getMessage());
+        }
         return ResponseResult.success();
     }
 }
