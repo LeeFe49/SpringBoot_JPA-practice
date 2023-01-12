@@ -8,6 +8,10 @@ public class PasswordUtils {
 
     public static boolean equalPassword(String password, String encryptedPassword) {
 
-        return BCrypt.checkpw(password, encryptedPassword);
+        try {
+            return BCrypt.checkpw(password, encryptedPassword);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 }

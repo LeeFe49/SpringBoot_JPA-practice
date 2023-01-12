@@ -84,7 +84,8 @@ public class ApiUserController {
 //    }
 
     @PutMapping("api/user/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody @Valid User userUpdate, Errors errors) {
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody @Valid User userUpdate,
+        Errors errors) {
 
         List<ResponseError> responseErrorList = new ArrayList<>();
         if (errors.hasErrors()) {
@@ -96,7 +97,7 @@ public class ApiUserController {
         }
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+            .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
 
         user.setPhone(userUpdate.getPhone());
         user.setUpdateDate(LocalDateTime.now());
@@ -114,7 +115,7 @@ public class ApiUserController {
     public UserResponse getUser(@PathVariable Long id) {
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+            .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
 
 //        UserResponse userResponse = new UserResponse(user);
         UserResponse userResponse = UserResponse.of(user);
@@ -125,7 +126,7 @@ public class ApiUserController {
     public List<NoticeResponse> userNotice(@PathVariable Long id) {
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+            .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
 
         List<Notice> noticeList = noticeRepository.findByUser(user);
 
@@ -171,7 +172,8 @@ public class ApiUserController {
     }
 
     @PatchMapping("/api/user/{id}/password")
-    public ResponseEntity<?> updateUserPassword(@PathVariable Long id, @RequestBody UserInputPassword userInputPassword, Errors errors) {
+    public ResponseEntity<?> updateUserPassword(@PathVariable Long id,
+        @RequestBody UserInputPassword userInputPassword, Errors errors) {
 
         List<ResponseError> responseErrorList = new ArrayList<>();
         if (errors.hasErrors()) {
@@ -182,7 +184,7 @@ public class ApiUserController {
         }
 
         User user = userRepository.findByIdAndPassword(id, userInputPassword.getPassword())
-                .orElseThrow(() -> new PasswordNotMatchException("비밀번호가 일치하지 않습니다."));
+            .orElseThrow(() -> new PasswordNotMatchException("비밀번호가 일치하지 않습니다."));
 
         user.setPassword(userInputPassword.getPassword());
 
@@ -215,12 +217,12 @@ public class ApiUserController {
         String encryptPassword = getEncryptPassword(userInput.getPassword());
 
         User user = User.builder()
-                .email(userInput.getEmail())
-                .userName(userInput.getUserName())
-                .phone(userInput.getPhone())
-                .password(encryptPassword)
-                .regDate(LocalDateTime.now())
-                .build();
+            .email(userInput.getEmail())
+            .userName(userInput.getUserName())
+            .phone(userInput.getPhone())
+            .password(encryptPassword)
+            .regDate(LocalDateTime.now())
+            .build();
         userRepository.save(user);
 
         return ResponseEntity.ok().build();
@@ -230,8 +232,7 @@ public class ApiUserController {
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
-
+            .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
 
         try {
             userRepository.delete(user);
@@ -249,8 +250,9 @@ public class ApiUserController {
     @GetMapping("/api/user")
     public ResponseEntity<?> findUser(@RequestBody UserInputFind userInputFind) {
 
-        User user = userRepository.findByUserNameAndPhone(userInputFind.getUserName(), userInputFind.getPhone())
-                .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+        User user = userRepository.findByUserNameAndPhone(userInputFind.getUserName(),
+                userInputFind.getPhone())
+            .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
 
         UserResponse userResponse = UserResponse.of(user);
 
@@ -265,7 +267,7 @@ public class ApiUserController {
     public ResponseEntity<?> resetUserPassword(@PathVariable Long id) {
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+            .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
 
         String resetPassword = getResetPassword();
         String resetEncryptPassword = getEncryptPassword(resetPassword);
@@ -273,7 +275,7 @@ public class ApiUserController {
         userRepository.save(user);
 
         String message = String.format("[%s]님의 임시 비밀번호가 [%s]로 초기화 되었습니다."
-                , user.getUserName(), resetPassword);
+            , user.getUserName(), resetPassword);
         sendSMS(message);
 
         return ResponseEntity.ok().build();
@@ -287,7 +289,7 @@ public class ApiUserController {
     @GetMapping("/api/user/{id}/notice/like")
     public List<NoticeLike> likeNotice(@PathVariable Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+            .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
 
         List<NoticeLike> noticeLikeList = noticeLikeRepository.findByUser(user);
 
@@ -306,7 +308,7 @@ public class ApiUserController {
         }
 
         User user = userRepository.findByEmail(userLogin.getEmail())
-                .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+            .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
 
         if (!PasswordUtils.equalPassword(userLogin.getPassword(), user.getPassword())) {
             throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다.");
@@ -316,11 +318,11 @@ public class ApiUserController {
         Date expiredDate = java.sql.Timestamp.valueOf(expiredDateTime);
 
         String token = JWT.create()
-                .withExpiresAt(expiredDate)
-                .withClaim("user_id", user.getId())
-                .withSubject(user.getUserName())
-                .withIssuer(user.getEmail())
-                .sign(Algorithm.HMAC512("fastcampus".getBytes()));
+            .withExpiresAt(expiredDate)
+            .withClaim("user_id", user.getId())
+            .withSubject(user.getUserName())
+            .withIssuer(user.getEmail())
+            .sign(Algorithm.HMAC512("fastcampus".getBytes()));
 
         return ResponseEntity.ok().body(UserLoginToken.builder().token(token).build());
     }
@@ -332,9 +334,9 @@ public class ApiUserController {
         String email = "";
         try {
             email = JWT.require(Algorithm.HMAC512("fastcampus".getBytes()))
-                    .build()
-                    .verify(token)
-                    .getIssuer();
+                .build()
+                .verify(token)
+                .getIssuer();
         } catch (SignatureVerificationException e) {
             throw new PasswordNotMatchException("비밀번호가 일치하지 않습니다.");
         } catch (Exception e) {
@@ -342,17 +344,17 @@ public class ApiUserController {
         }
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
+            .orElseThrow(() -> new UserNotFoundException("사용자 정보가 없습니다."));
 
         LocalDateTime expiredDateTime = LocalDateTime.now().plusMonths(1);
         Date expiredDate = java.sql.Timestamp.valueOf(expiredDateTime);
 
         String newToken = JWT.create()
-                .withExpiresAt(expiredDate)
-                .withClaim("user_id", user.getId())
-                .withSubject(user.getUserName())
-                .withIssuer(user.getEmail())
-                .sign(Algorithm.HMAC512("fastcampus".getBytes()));
+            .withExpiresAt(expiredDate)
+            .withClaim("user_id", user.getId())
+            .withSubject(user.getUserName())
+            .withIssuer(user.getEmail())
+            .sign(Algorithm.HMAC512("fastcampus".getBytes()));
 
         return ResponseEntity.ok().body(UserLoginToken.builder().token(newToken).build());
     }
