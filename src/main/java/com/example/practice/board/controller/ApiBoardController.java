@@ -1,6 +1,8 @@
 package com.example.practice.board.controller;
 
+import com.example.practice.board.common.model.ResponseResult;
 import com.example.practice.board.entity.BoardType;
+import com.example.practice.board.model.BoardPeriod;
 import com.example.practice.board.model.BoardTypeCount;
 import com.example.practice.board.model.BoardTypeInput;
 import com.example.practice.board.model.BoardTypeUsing;
@@ -115,5 +117,17 @@ public class ApiBoardController {
 
         ServiceResult result = boardService.setBoardTop(id, false);
         return ResponseEntity.ok().body(result);
+    }
+
+    @PatchMapping("/api/board/{id}/publish")
+    public ResponseEntity<?> boardPeriod(@PathVariable Long id, @RequestBody BoardPeriod boardPeriod) {
+
+        ServiceResult result = boardService.setBoardPeriod(id, boardPeriod);
+
+        if (!result.isResult()) {
+            return ResponseResult.fail(result.getMessage());
+        }
+
+        return ResponseResult.success();
     }
 }

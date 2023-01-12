@@ -1,6 +1,7 @@
 package com.example.practice.board.service;
 
 import com.example.practice.board.entity.BoardType;
+import com.example.practice.board.model.BoardPeriod;
 import com.example.practice.board.model.BoardTypeCount;
 import com.example.practice.board.model.BoardTypeInput;
 import com.example.practice.board.model.BoardTypeUsing;
@@ -22,4 +23,6 @@ public interface BoardService {
     List<BoardTypeCount> getBoardTypeCount();
 
     ServiceResult setBoardTop(Long id, boolean topYn);
+
+    ServiceResult setBoardPeriod(Long id, BoardPeriod boardPeriod);
 }

@@ -2,6 +2,7 @@ package com.example.practice.board.service;
 
 import com.example.practice.board.entity.Board;
 import com.example.practice.board.entity.BoardType;
+import com.example.practice.board.model.BoardPeriod;
 import com.example.practice.board.model.BoardTypeCount;
 import com.example.practice.board.model.BoardTypeInput;
 import com.example.practice.board.model.BoardTypeUsing;
@@ -127,6 +128,22 @@ public class BoardServiceImpl implements BoardService {
         }
 
         board.setTopYn(topYn);
+        boardRepository.save(board);
+
+        return ServiceResult.success();
+    }
+
+    @Override
+    public ServiceResult setBoardPeriod(Long id, BoardPeriod boardPeriod) {
+
+        Optional<Board> optionalBoard = boardRepository.findById(id);
+        if (!optionalBoard.isPresent()) {
+            return ServiceResult.fail("게시글이 존재하지 않습니다.");
+        }
+        Board board = optionalBoard.get();
+
+        board.setPublishStartDate(boardPeriod.getStartDate());
+        board.setPublishEndDate(boardPeriod.getEndDate());
         boardRepository.save(board);
 
         return ServiceResult.success();

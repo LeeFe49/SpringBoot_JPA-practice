@@ -54,13 +54,15 @@ create table BOARD_TYPE
 -- auto-generated definition
 create table BOARD
 (
-    ID            BIGINT auto_increment primary key,
-    CONTENTS      CHARACTER VARYING(255),
-    REG_DATE      TIMESTAMP,
-    TITLE         CHARACTER VARYING(255),
-    BOARD_TYPE_ID BIGINT,
-    USER_ID       BIGINT,
-    TOP_YN        BOOLEAN,
+    ID                 BIGINT auto_increment primary key,
+    CONTENTS           CHARACTER VARYING(255),
+    REG_DATE           TIMESTAMP,
+    TITLE              CHARACTER VARYING(255),
+    BOARD_TYPE_ID      BIGINT,
+    USER_ID            BIGINT,
+    TOP_YN             BOOLEAN,
+    PUBLISH_START_DATE DATE,
+    PUBLISH_END_DATE   DATE,
     constraint FK_BOARD_BOARD_TYPE_ID foreign key (BOARD_TYPE_ID) references BOARD_TYPE,
     constraint FK_BOARD_USER_ID foreign key (USER_ID) references USER
 );
