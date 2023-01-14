@@ -22,7 +22,7 @@ public class Book {
     }
 
 
-    public void test() {
-        System.out.println("브랜치 생성 테스트!");
+    public void testBranch() {
+        System.out.println("브랜치 수정작업 테스트");
     }
 }
