@@ -25,4 +25,8 @@ public class Book {
     public void testBranch() {
         System.out.println("브랜치 수정작업 테스트");
     }
+
+    public void test2() {
+        System.out.println("test2");
+    }
 }
