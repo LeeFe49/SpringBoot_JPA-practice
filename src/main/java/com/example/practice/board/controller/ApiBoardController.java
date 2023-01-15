@@ -35,7 +35,7 @@ public class ApiBoardController {
     private final BoardService boardService;
 
     @PostMapping("/api/board/type")
-    public ResponseEntity<?> addBoardType(@RequestBody @Valid BoardTypeInput boardTypeInput,
+    public ResponseEntity<ResponseMessage> addBoardType(@RequestBody @Valid BoardTypeInput boardTypeInput,
         Errors errors) {
 
         if (errors.hasErrors()) {
@@ -53,7 +53,7 @@ public class ApiBoardController {
     }
 
     @PutMapping("/api/board/type/{id}")
-    public ResponseEntity<?> updateBoardType(@PathVariable Long id,
+    public ResponseEntity<ResponseMessage> updateBoardType(@PathVariable Long id,
         @RequestBody @Valid BoardTypeInput boardTypeInput, Errors errors) {
 
         if (errors.hasErrors()) {
@@ -71,7 +71,7 @@ public class ApiBoardController {
     }
 
     @DeleteMapping("/api/board/type/{id}")
-    public ResponseEntity<?> deleteBoardType(@PathVariable Long id) {
+    public ResponseEntity<ResponseMessage> deleteBoardType(@PathVariable Long id) {
 
         ServiceResult result = boardService.deleteBoard(id);
 
@@ -82,7 +82,7 @@ public class ApiBoardController {
     }
 
     @GetMapping("/api/board/type")
-    public ResponseEntity<?> boardType() {
+    public ResponseEntity<ResponseMessage> boardType() {
 
         List<BoardType> boardTypeList = boardService.getAllBoardType();
 
@@ -90,7 +90,7 @@ public class ApiBoardController {
     }
 
     @PatchMapping("/api/board/type/{id}/using")
-    public ResponseEntity<?> usingBoardType(@PathVariable Long id,
+    public ResponseEntity<ResponseMessage> usingBoardType(@PathVariable Long id,
         @RequestBody BoardTypeUsing boardTypeUsing) {
 
         ServiceResult result = boardService.setBoardTypeUsing(id, boardTypeUsing);
@@ -102,7 +102,7 @@ public class ApiBoardController {
     }
 
     @GetMapping("/api/board/type/count")
-    public ResponseEntity<?> boardTypeCount() {
+    public ResponseEntity<Object> boardTypeCount() {
 
         List<BoardTypeCount> list = boardService.getBoardTypeCount();
         return ResponseEntity.ok().body(list);
