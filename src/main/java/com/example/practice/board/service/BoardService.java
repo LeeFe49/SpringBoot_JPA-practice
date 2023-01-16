@@ -1,6 +1,7 @@
 package com.example.practice.board.service;
 
 import com.example.practice.board.entity.BoardType;
+import com.example.practice.board.model.BoardBadReportInput;
 import com.example.practice.board.model.BoardPeriod;
 import com.example.practice.board.model.BoardTypeCount;
 import com.example.practice.board.model.BoardTypeInput;
@@ -27,4 +28,10 @@ public interface BoardService {
     ServiceResult setBoardPeriod(Long id, BoardPeriod boardPeriod);
 
     ServiceResult setBoardHits(Long id, String email);
+
+    ServiceResult setBoardLike(Long id, String email);
+
+    ServiceResult setBoardUnLike(Long id, String email);
+
+    ServiceResult badReport(Long id, String email, BoardBadReportInput boardBadReportInput);
 }
