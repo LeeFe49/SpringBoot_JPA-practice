@@ -3,6 +3,7 @@ package com.example.practice.board.controller;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.example.practice.board.common.model.ResponseResult;
 import com.example.practice.board.entity.BoardType;
+import com.example.practice.board.model.BoardBadReportInput;
 import com.example.practice.board.model.BoardPeriod;
 import com.example.practice.board.model.BoardTypeCount;
 import com.example.practice.board.model.BoardTypeInput;
@@ -180,6 +181,22 @@ public class ApiBoardController {
         }
 
         ServiceResult result = boardService.setBoardUnLike(id, email);
+        return ResponseResult.result(result);
+    }
+
+    @PutMapping("/api/board/{id}/badreport")
+    public ResponseEntity<?> boardBadReport(@PathVariable Long id
+        , @RequestHeader("F-TOKEN") String token
+        , @RequestBody BoardBadReportInput boardBadReportInput) {
+
+        String email = "";
+        try {
+            email = JWTUtils.getIssuer(token);
+        } catch (JWTVerificationException e) {
+            return ResponseResult.fail("토큰 정보가 정확하지 않습니다.");
+        }
+
+        ServiceResult result = boardService.badReport(id, email, boardBadReportInput);
         return ResponseResult.result(result);
     }
 }
