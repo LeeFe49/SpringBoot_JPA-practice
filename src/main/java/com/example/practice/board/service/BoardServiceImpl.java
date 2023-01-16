@@ -2,6 +2,7 @@ package com.example.practice.board.service;
 
 import com.example.practice.board.entity.Board;
 import com.example.practice.board.entity.BoardHits;
+import com.example.practice.board.entity.BoardLike;
 import com.example.practice.board.entity.BoardType;
 import com.example.practice.board.model.BoardPeriod;
 import com.example.practice.board.model.BoardTypeCount;
@@ -9,6 +10,7 @@ import com.example.practice.board.model.BoardTypeInput;
 import com.example.practice.board.model.BoardTypeUsing;
 import com.example.practice.board.model.ServiceResult;
 import com.example.practice.board.repository.BoardHitsRepository;
+import com.example.practice.board.repository.BoardLikeRepository;
 import com.example.practice.board.repository.BoardRepository;
 import com.example.practice.board.repository.BoardTypeCustomRepository;
 import com.example.practice.board.repository.BoardTypeRepository;
@@ -29,6 +31,7 @@ public class BoardServiceImpl implements BoardService {
     private final BoardTypeCustomRepository boardTypeCustomRepository;
     private final BoardHitsRepository boardHitsRepository;
     private final UserRepository userRepository;
+    private final BoardLikeRepository boardLikeRepository;
 
     public ServiceResult addBoard(BoardTypeInput boardTypeInput) {
 
@@ -179,6 +182,34 @@ public class BoardServiceImpl implements BoardService {
             .user(user)
             .regDate(LocalDateTime.now())
             .build());
+        return ServiceResult.success();
+    }
+
+    @Override
+    public ServiceResult setBoardLike(Long id, String email) {
+
+        Optional<Board> optionalBoard = boardRepository.findById(id);
+        if (!optionalBoard.isPresent()) {
+            return ServiceResult.fail("게시글이 존재하지 않습니다.");
+        }
+        Board board = optionalBoard.get();
+
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (!optionalUser.isPresent()) {
+            return ServiceResult.fail("회원 정보가 존재하지 않습니다.");
+        }
+        User user = optionalUser.get();
+
+        long boardLikeCount = boardLikeRepository.countByBoardAndUser(board, user);
+        if (boardLikeCount > 0) {
+            return ServiceResult.fail("이미 좋아요한 내용이 있습니다.");
+        }
+
+        boardLikeRepository.save(BoardLike.builder()
+            .board(board)
+            .user(user)
+            .regDate(LocalDateTime.now()).build());
+
         return ServiceResult.success();
     }
 }
