@@ -1,7 +1,9 @@
 package com.example.practice.board.common.model;
 
+import com.example.practice.board.entity.BoardBadReport;
 import com.example.practice.board.model.ServiceResult;
 import com.example.practice.user.model.ResponseMessage;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 
 public class ResponseResult {
@@ -11,7 +13,7 @@ public class ResponseResult {
     }
 
     public static ResponseEntity<?> success() {
-        return ResponseEntity.ok(ResponseMessage.success());
+        return success(null);
     }
 
     public static ResponseEntity<?> result(ServiceResult result) {
@@ -19,5 +21,9 @@ public class ResponseResult {
             return fail(result.getMessage());
         }
         return success();
+    }
+
+    public static ResponseEntity<?> success(List<BoardBadReport> data) {
+        return ResponseEntity.ok(ResponseMessage.success(data));
     }
 }
