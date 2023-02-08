@@ -1,13 +1,18 @@
 package com.example.practice.user.service;
 
 
+import com.example.practice.board.model.ServiceResult;
 import com.example.practice.user.entity.User;
+import com.example.practice.user.entity.UserInterest;
 import com.example.practice.user.model.UserNoticeCount;
 import com.example.practice.user.model.UserStatus;
 import com.example.practice.user.model.UserSummary;
 import com.example.practice.user.repository.UserCustomRepository;
+import com.example.practice.user.repository.UserInterestRepository;
 import com.example.practice.user.repository.UserRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.config.web.servlet.oauth2.resourceserver.OpaqueTokenDsl;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,6 +24,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserCustomRepository userCustomRepository;
+    private final UserInterestRepository userInterestRepository;
+
     @Override
     public UserSummary getUserStatusCount() {
 
@@ -48,5 +55,64 @@ public class UserServiceImpl implements UserService {
 
 
         return userCustomRepository.findUserNoticeCount();
+    }
+
+    @Override
+    public ServiceResult addInterestUser(String email, Long id) {
+
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (!optionalUser.isPresent()) {
+            return ServiceResult.fail("회원 정보가 존재하지 않습니다.");
+        }
+        User user = optionalUser.get();
+
+        Optional<User> optionalInterestUser = userRepository.findById(id);
+        if (!optionalInterestUser.isPresent()) {
+            return ServiceResult.fail("관심사용자에 추가할 회원 정보가 존재하지 않습니다.");
+        }
+        User interestUser = optionalInterestUser.get();
+
+        if (user.getId() == interestUser.getId()) {
+            return ServiceResult.fail("자기자신은 추가할 수 없습니다.");
+        }
+
+        if (userInterestRepository.countByUserAndInterestUser(user,
+            interestUser) > 0) {
+            return ServiceResult.fail("이미 관심사용자 목록에 추가하였습니다.");
+        }
+        UserInterest userInterest = UserInterest.builder()
+            .user(user)
+            .interestUser(interestUser)
+            .regDate(LocalDateTime.now())
+            .build();
+
+        userInterestRepository.save(userInterest);
+
+        return ServiceResult.success();
+    }
+
+    @Override
+    public ServiceResult removeInterestUser(String email, Long interestId) {
+
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (!optionalUser.isPresent()) {
+            return ServiceResult.fail("회원 정보가 존재하지 않습니다.");
+        }
+        User user = optionalUser.get();
+
+        Optional<UserInterest> optionalUserInterest = userInterestRepository.findById(
+            interestId);
+        if (!optionalUserInterest.isPresent()) {
+            return ServiceResult.fail("삭제할 정보가 없습니다.");
+        }
+
+        UserInterest userInterest = optionalUserInterest.get();
+
+        if (userInterest.getUser().getId() != user.getId()) {
+            return ServiceResult.fail("본인의 관심자 정보만 삭제할 수 있습니다.");
+        }
+
+        userInterestRepository.delete(userInterest);
+        return ServiceResult.success();
     }
 }
