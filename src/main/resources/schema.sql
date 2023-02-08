@@ -115,3 +115,15 @@ create table BOARD_SCRAP
     USER_ID        BIGINT,
     constraint FK_BOARD_SCRAP_USER_ID foreign key (USER_ID) references USER
 );
+
+create table BOARD_BOOKMARK
+(
+    ID             BIGINT auto_increment primary key,
+    USER_ID        BIGINT,
+    BOARD_ID       BIGINT,
+    BOARD_TYPE_ID  BIGINT,
+    BOARD_TITLE    CHARACTER VARYING(255),
+    BOARD_URL      CHARACTER VARYING(255),
+    REG_DATE       TIMESTAMP,
+    constraint FK_BOARD_BOOKMARK_USER_ID foreign key (USER_ID) references USER
+);
