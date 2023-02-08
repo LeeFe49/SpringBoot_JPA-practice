@@ -17,4 +17,6 @@ public interface UserService {
     List<UserNoticeCount> getUserNoticeCount();
 
     ServiceResult addInterestUser(String email, Long id);
+
+    ServiceResult removeInterestUser(String email, Long id);
 }
