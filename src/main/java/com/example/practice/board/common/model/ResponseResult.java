@@ -23,7 +23,7 @@ public class ResponseResult {
         return success();
     }
 
-    public static ResponseEntity<?> success(List<BoardBadReport> data) {
+    public static ResponseEntity<?> success(Object data) {
         return ResponseEntity.ok(ResponseMessage.success(data));
     }
 }

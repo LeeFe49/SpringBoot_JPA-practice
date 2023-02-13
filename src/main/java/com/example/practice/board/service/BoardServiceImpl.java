@@ -1,8 +1,10 @@
 package com.example.practice.board.service;
 
+import com.example.practice.board.common.model.ResponseResult;
 import com.example.practice.board.entity.Board;
 import com.example.practice.board.entity.BoardBadReport;
 import com.example.practice.board.entity.BoardBookmark;
+import com.example.practice.board.entity.BoardComment;
 import com.example.practice.board.entity.BoardHits;
 import com.example.practice.board.entity.BoardLike;
 import com.example.practice.board.entity.BoardScrap;
@@ -15,12 +17,14 @@ import com.example.practice.board.model.BoardTypeUsing;
 import com.example.practice.board.model.ServiceResult;
 import com.example.practice.board.repository.BoardBadReportRepository;
 import com.example.practice.board.repository.BoardBookmarkRepository;
+import com.example.practice.board.repository.BoardCommentRepository;
 import com.example.practice.board.repository.BoardHitsRepository;
 import com.example.practice.board.repository.BoardLikeRepository;
 import com.example.practice.board.repository.BoardRepository;
 import com.example.practice.board.repository.BoardScrapRepository;
 import com.example.practice.board.repository.BoardTypeCustomRepository;
 import com.example.practice.board.repository.BoardTypeRepository;
+import com.example.practice.common.exception.BizException;
 import com.example.practice.user.entity.User;
 import com.example.practice.user.repository.UserRepository;
 import java.time.LocalDateTime;
@@ -42,6 +46,7 @@ public class BoardServiceImpl implements BoardService {
     private final BoardBadReportRepository boardBadReportRepository;
     private final BoardScrapRepository boardScrapRepository;
     private final BoardBookmarkRepository boardBookmarkRepository;
+    private final BoardCommentRepository boardCommentRepository;
 
     public ServiceResult addBoard(BoardTypeInput boardTypeInput) {
 
@@ -386,5 +391,31 @@ public class BoardServiceImpl implements BoardService {
 
         boardBookmarkRepository.delete(boardBookmark);
         return ServiceResult.success();
+    }
+
+    @Override
+    public List<Board> postList(String email) {
+
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (!optionalUser.isPresent()) {
+            throw new BizException("회원 정보가 존재하지 않습니다.");
+        }
+        User user = optionalUser.get();
+
+        List<Board> list = boardRepository.findByUser(user);
+        return list;
+    }
+
+    @Override
+    public List<BoardComment> commentList(String email) {
+
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (!optionalUser.isPresent()) {
+            throw new BizException("회원 정보가 존재하지 않습니다.");
+        }
+        User user = optionalUser.get();
+
+        List<BoardComment> list = boardCommentRepository.findByUser(user);
+        return list;
     }
 }
